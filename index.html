@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<title>Көңіл-күй бойынша ұсыныс</title>
+
+<style>
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    transition: 0.5s;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    margin-top: 40px;
+}
+
+.buttons {
+    margin-top: 20px;
+}
+
+button {
+    margin: 10px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.1);
+}
+
+#result {
+    margin-top: 30px;
+    font-size: 18px;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+/* фондар */
+.happy { background: #ffe066; }
+.sad { background: #74c0fc; }
+.tired { background: #343a40; color: white; }
+
+/* карточка */
+.card {
+    display: inline-block;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.tired .card {
+    background: #495057;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Көңіл-күйіңізді таңдаңыз 😊</h1>
+
+<div class="buttons">
+    <button onclick="suggest('happy')">😊 Қуанышты</button>
+    <button onclick="suggest('sad')">😢 Мұңды</button>
+    <button onclick="suggest('tired')">😴 Шаршаған</button>
+</div>
+
+<div id="result"></div>
+
+<script>
+const data = {
+happy: {
+movies: ["Менің атым Қожа","Бизнес по-казахски","Келинка Сабина","Home Alone","The Mask","Mr. Bean","Rush Hour","Yes Man","The Intern","Paddington","Jumanji","Johnny English","Night at the Museum","Toy Story","Shrek","The Lego Movie","Sing","Madagascar","Minions","Forrest Gump","The Greatest Showman","La La Land","Chef","Mamma Mia","School of Rock","Walter Mitty","Enchanted","Clueless","Mean Girls","Legally Blonde"],
+music: ["Дос-Мұқасан – Той жыры","Қайрат Нұртас – Ауырмайды жүрек","Молданазар – Ақпен бірге","Ninety One – Айыптама","RaiM – Двигаться","Ziruza – Ice","Pharrell Williams – Happy","Bruno Mars – Uptown Funk","Taylor Swift – Shake It Off","Dua Lipa – Levitating","Ed Sheeran – Shape of You","Black Eyed Peas – I Gotta Feeling","Justin Timberlake – Can't Stop the Feeling","Katy Perry – Firework","Shakira – Waka Waka","Maroon 5 – Sugar","OneRepublic – Good Life","Coldplay – Adventure of a Lifetime","Avicii – Wake Me Up","Imagine Dragons – On Top of the World","BTS – Dynamite","PSY – Gangnam Style","Harry Styles – As It Was","Doja Cat – Say So","Billie Eilish – bad guy","Adele – Rolling in the Deep","Jason Mraz – I'm Yours","Train – Hey Soul Sister","Meghan Trainor – All About That Bass","Clean Bandit – Rather Be"],
+activity: ["Достармен кездесу","Серуендеу","Би билеу","Музыка тыңдау","Кино көру","Сурет салу","Спорт","Фотосессия","Кафеге бару","Саяхат жоспарлау","Видео түсіру","TikTok","Рецепт дайындау","Ойын ойнау","Кітап оқу","Күнделік жазу","Подкаст","Жаңа нәрсе үйрену","Тіл үйрену","Йога","Жүгіру","Велосипед","Таза ауа","Сыйлық алу","Бөлмені безендіру","Досқа жазу","Релакс","Мотивация","Жоспар құру","Күлкілі видео"]
+},
+
+sad: {
+movies: ["Жаужүрек мың бала","Анаға апарар жол","Шал","Pursuit of Happyness","Forrest Gump","Green Mile","Hachi","Titanic","Interstellar","Fault in Our Stars","Five Feet Apart","Me Before You","Life of Pi","Cast Away","Beautiful Mind","The Pianist","Room","Terabithia","Marley & Me","Notebook","Her","Manchester by the Sea","Requiem for a Dream","Striped Pajamas","Grave of Fireflies","A Star Is Born","Theory of Everything","Into the Wild","The Whale","Nomadland"],
+music: ["Димаш – Ұмытылмас күн","Мұрат Насыров – Я это ты","Молданазар – Сен емес","Нұрлан Насип – Сүйемін","Adele – Someone Like You","Billie Eilish – Happier Than Ever","Sam Smith","Lewis Capaldi","Ed Sheeran – Photograph","Coldplay – Fix You","Linkin Park – Numb","Eminem – Mockingbird","Rihanna – Stay","Lana Del Rey","Olivia Rodrigo","Taylor Swift","Bruno Mars","James Blunt","Sia","Radiohead","Arctic Monkeys","Imagine Dragons","Aurora","Hozier","Passenger","Shawn Mendes","Charlie Puth","Joji","The Weeknd","Frank Ocean"],
+activity: ["Серуендеу","Күнделік","Музыка","Кітап","Шай","Фильм","Демалу","Медитация","Жаттығу","Сөйлесу","Жазу","Сурет","Жылау","Тыныштық","Табиғат","Йога","Подкаст","Self-care","Ванна","Психология","Видео","Жоспар","Ұйықтау","Досқа жазу","Естелік","Музыка","Телефонсыз","Мақсат","Жазба","Тынығу"]
+},
+
+tired: {
+movies: ["Келинка тоже человек","Бизнес по-казахски в Америке","Friends","HIMYM","Office","Brooklyn 99","Harry Potter","Hobbit","Doctor Strange","Spider-Man","Avatar","Guardians","Thor","Ant-Man","Deadpool","Shazam","Encanto","Coco","Luca","Turning Red","Finding Nemo","Cars","Zootopia","Frozen","Moana","Aladdin","Lion King","Kung Fu Panda","Hotel Transylvania","Despicable Me"],
+music: ["Lo-fi","Piano","Rain","Nature","Молданазар","Димаш","Yiruma","Einaudi","Enya","Coldplay","Billie Eilish","Sam Smith","Adele","Ed Sheeran","John Legend","Norah Jones","Bruno Mars","Harry Styles","Lana Del Rey","Weeknd","Imagine Dragons","Aurora","Joji","Olivia Rodrigo","Taylor Swift","Arijit Singh","Zayn","Sia","Passenger","Relax"],
+activity: ["Ұйықтау","Демалу","Музыка","Душ","Телефонсыз","Фильм","Жату","Йога","Созылу","Тыныс","Медитация","Көз демалысы","Шай","Серуен","Массаж","Кітап","Подкаст","Кейінге қалдыру","Тыныштық","Релакс","Кофе","Табиғат","Жазу","Ой босату","Экрансыз","Ерте ұйықтау","Дене демалысы","Жай фильм","Көз жабу","Тынығу"]
+}
+};
+
+function random(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function suggest(mood) {
+    document.body.className = mood;
+
+    let result = document.getElementById("result");
+
+    result.style.opacity = 0;
+
+    setTimeout(() => {
+        result.innerHTML = `
+            <div class="card">
+                <h2>Ұсыныс:</h2>
+                🎬 <b>Фильм:</b> ${random(data[mood].movies)} <br><br>
+                🎵 <b>Музыка:</b> ${random(data[mood].music)} <br><br>
+                📚 <b>Іс-әрекет:</b> ${random(data[mood].activity)}
+            </div>
+        `;
+        result.style.opacity = 1;
+    }, 200);
+}
+</script>
+
+</body>
+</html>
